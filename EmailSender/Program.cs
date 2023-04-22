@@ -9,7 +9,10 @@ var startup = new Startup();
 
 var mail = new MailMessage();
 mail.From = new MailAddress(startup.AppSettings.Account);
-mail.To.Add(startup.AppSettings.Receiver);
+startup.AppSettings.Receivers.ForEach(receiver =>
+{
+    mail.To.Add(receiver);
+});
 
 // TODO: should be from config or outside files.
 mail.Subject = "測試信3";
@@ -37,7 +40,7 @@ try
 }
 catch (Exception ex)
 {
-    Console.WriteLine($"Could not send the email to {startup.AppSettings.Receiver} : {ex.Message}");
+    Console.WriteLine($"Could not send the email : {ex.Message}");
     
     return 1;
 }
@@ -47,5 +50,8 @@ finally
     client.Dispose();
 }
 
-Console.WriteLine($"Successfully sent the email from {startup.AppSettings.Account} to {startup.AppSettings.Receiver}");
+startup.AppSettings.Receivers.ForEach(receiver =>
+{
+    Console.WriteLine($"Successfully sent the email from {startup.AppSettings.Account} to {receiver}");
+});
 return 0;
